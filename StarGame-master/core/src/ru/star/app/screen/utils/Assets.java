@@ -1,0 +1,86 @@
+package ru.star.app.screen.utils;
+
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
+import ru.star.app.screen.ScreenManager.ScreenType;
+
+public class Assets {
+    private static final Assets ourInstance = new Assets();
+
+    public static Assets getInstance() {
+        return ourInstance;
+    }
+
+    private AssetManager assetManager;
+    private TextureAtlas textureAtlas;
+
+    public TextureAtlas getAtlas() {
+        return textureAtlas;
+    }
+
+    public AssetManager getAssetManager() {
+        return assetManager;
+    }
+
+    private Assets() {
+        assetManager = new AssetManager();
+    }
+
+    public void loadAssets(ScreenType type) {
+        switch (type) {
+            case GAME:
+                assetManager.load("images/game.pack", TextureAtlas.class);
+                createStandardFont(32);
+                createStandardFont(24);
+                assetManager.load("audio/mortal.mp3", Music.class);
+                assetManager.load("audio/shoot.mp3", Sound.class);
+                assetManager.load("audio/explose.mp3", Sound.class);
+                assetManager.load("audio/explose2.mp3", Sound.class);
+                break;
+            case MENU:
+                assetManager.load("images/game.pack", TextureAtlas.class);
+                createStandardFont(72);
+                createStandardFont(24);
+                assetManager.load("audio/music.mp3", Music.class);
+                break;
+            case GAME_OVER:
+                assetManager.load("images/game.pack", TextureAtlas.class);
+                createStandardFont(72);
+                createStandardFont(48);
+                createStandardFont(24);
+                assetManager.load("audio/music.mp3", Music.class);
+                break;
+        }
+    }
+
+    private void createStandardFont(int size) {
+        FileHandleResolver resolver = new InternalFileHandleResolver();
+        assetManager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
+        assetManager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
+        FreetypeFontLoader.FreeTypeFontLoaderParameter fontParameter = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        fontParameter.fontFileName = "fonts/Roboto-Medium.ttf";
+        fontParameter.fontParameters.size = size;
+        fontParameter.fontParameters.color = Color.WHITE;
+        fontParameter.fontParameters.shadowOffsetX = 1;
+        fontParameter.fontParameters.shadowOffsetY = 1;
+        fontParameter.fontParameters.shadowColor = Color.DARK_GRAY;
+        assetManager.load("fonts/font" + size + ".ttf", BitmapFont.class, fontParameter);
+    }
+
+    public void clear() {
+        assetManager.clear();
+    }
+
+    public void makeLinks(){
+        textureAtlas = assetManager.get("images/game.pack", TextureAtlas.class);
+    }
+}
